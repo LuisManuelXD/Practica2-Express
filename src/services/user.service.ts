@@ -35,6 +35,7 @@ class UserService {
       throw boom.notFound('User not found')
     }
 
+    user.password = undefined
     return user
   }
 }
