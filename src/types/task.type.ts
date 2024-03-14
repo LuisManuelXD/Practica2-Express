@@ -1,4 +1,5 @@
 import type { Model } from 'mongoose'
+import { User } from './user.type'
 
 export type Task = {
     id?: string
@@ -8,6 +9,7 @@ export type Task = {
     createdAt?: Date
     lastModified?: Date
     endIn?: Date
+    user: User
 }
 
 export type TaskModel = Model<Task>

@@ -1,20 +1,27 @@
+import { ObjectId } from 'mongoose'
 import Tasks from '../models/task.model'
 import { Task, TaskModel } from '../types/task.type'
 import boom from '@hapi/boom'
 
 class TaskService {
-  async create(task: Task) {
-    const newTask = await Tasks.create(task).catch((error) => {
-      console.log('Could not save task', error)
-    })
+  async create(task: Task, userId: ObjectId) {
+    const newTask = await Tasks.create({ ...task, user: userId }).catch(
+      (error) => {
+        console.log('Could not save task', error)
+      }
+    )
 
-    return newTask
+    const existingTask = await this.findById((newTask as any)._id)
+
+    return existingTask.populate([{ path: 'user', strictPopulate: false }])
   }
 
   async findAll(filters: Partial<Task>) {
-    const tasks = await Tasks.find(filters).catch((error) => {
-      console.log('Error while connecting to the DB', error)
-    })
+    const tasks = await Tasks.find(filters)
+      .populate([{ path: 'user', strictPopulate: false }])
+      .catch((error) => {
+        console.log('Error while connecting to the DB', error)
+      })
 
     if (!tasks) {
       throw boom.notFound('There are not tasks')
@@ -83,8 +90,8 @@ class TaskService {
       throw boom.notFound('Update task not found')
     }
 
-    Object.assign(task, newTask);
-    await task.save();
+    Object.assign(task, newTask)
+    await task.save()
 
     return newTask
   }
