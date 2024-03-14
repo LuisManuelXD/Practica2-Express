@@ -4,11 +4,11 @@ import boom from '@hapi/boom'
 import bcrypt from 'bcrypt'
 
 class UserService {
-  // getToClientUser(user: Partial<User>): Partial<User> {
-  //   //Aqui podemos sobreescribir las propiedades que queremos excluir
-  //   //asignandoles undefined
-  //   return { ...user, password: undefined }
-  // }
+  getToClientUser(user: Partial<User>): Partial<User> {
+    //Aqui podemos sobreescribir las propiedades que queremos excluir
+    //asignandoles undefined
+    return { ...user, password: undefined }
+  }
 
   async create(user: User) {
     const hashedPassword = await bcrypt.hash(user.password, 10)
@@ -35,6 +35,7 @@ class UserService {
       throw boom.notFound('User not found')
     }
 
+    user.password = undefined
     return user
   }
 }
